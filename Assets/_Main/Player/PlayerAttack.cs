@@ -8,6 +8,10 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] float f_attackbuttonpressedtime = 0f;
     private bool b_attacked = false;
 
+    [SerializeField]bool b_islocking = false;
+    
+    public Transform transform_target;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -94,5 +98,15 @@ public class PlayerAttack : MonoBehaviour
 
     void OnDrapDown()
     {
+    }
+
+    public bool Getislocking()
+    {
+        return b_islocking;
+    }
+
+    public Transform GetTarget()
+    {
+        return transform_target;
     }
 }

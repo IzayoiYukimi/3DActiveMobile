@@ -1862,10 +1862,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 1908248943}
   f_rotationSpeed: 0.1
+  f_smoothSpeed: 5
   f_distance: 5
   f_minVerticalAngle: -0
   f_maxVerticalAngle: 60
   s_attackbutton: {fileID: 564196768}
+  s_playerattack: {fileID: 1580408093}
 --- !u!1 &1070862345
 GameObject:
   m_ObjectHideFlags: 0
@@ -2184,12 +2186,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  f_rotationSpeed: 5
+  f_rotationSpeed: 10
   b_isrolling: 0
-  b_islocking: 0
   b_isontheground: 0
-  f_movex: 0
-  f_movey: 0
   ikWeight: 1
   footOffset: 0.1
 --- !u!114 &1580408085
@@ -2233,6 +2232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   f_attackbuttonpressedtime: 0
+  b_islocking: 0
+  transform_target: {fileID: 1370109406}
 --- !u!114 &1580408097
 MonoBehaviour:
   m_ObjectHideFlags: 0

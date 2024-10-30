@@ -2,79 +2,102 @@ using UnityEngine;
 
 public class MainCameraController : MonoBehaviour
 {
-    [Header("目标对象")] [Tooltip("摄像头围绕旋转的目标（通常是Player）")]
+    [Header("目标对象")]
     public Transform target;
 
-    [Header("旋转速度")] [Tooltip("控制摄像头旋转的速度")]
+    [Header("旋转速度")]
     public float f_rotationSpeed = 0.2f;
+    public float f_smoothSpeed = 5f;
 
-    [Header("摄像头距离")] [Tooltip("摄像头与目标之间的距离")]
+    [Header("摄像头距离")]
     public float f_distance = 5.0f;
 
-    [Header("垂直角度限制")] [Tooltip("摄像头垂直旋转角度的最小和最大值")]
+    [Header("垂直角度限制")]
     public float f_minVerticalAngle = -0f;
-
     public float f_maxVerticalAngle = 60f;
 
     [SerializeField] private AttackButton s_attackbutton;
+    [SerializeField] private PlayerAttack s_playerattack;
 
     private Vector3 v3_offset;
-    private float f_currentYaw = 0f; // 水平角度
-    private float f_currentPitch = 0f; // 垂直角度
+    private float f_currentYaw = 0f;
+    private float f_currentPitch = 0f;
 
     void OnEnable()
     {
-        // 初始化摄像头的偏移位置
         v3_offset = new Vector3(0, 0, -f_distance);
-
-        // 初始化摄像头位置
         transform.position = target.position + v3_offset;
         transform.LookAt(target);
     }
 
     void Update()
     {
-        // 检查是否有触摸输入
+        if (s_playerattack.Getislocking())
+        {
+            // 锁定状态下持续保持相机在延长线上
+            MaintainCameraOnExtensionLine();
+        }
+        else
+        {
+            // 未锁定时的常规摄像机控制（例如自由旋转）
+            HandleFreeCamera();
+        }
+    }
+
+    void MaintainCameraOnExtensionLine()
+    {
+        // 计算角色到目标的方向向量
+        Vector3 directionToTarget = (target.position - s_playerattack.GetTarget().position).normalized;
+
+        // 计算相机的位置，使其在目标到角色的延长线上
+        Vector3 desiredPosition = target.position + directionToTarget * f_distance;
+
+        // 平滑移动摄像机到目标位置
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * f_smoothSpeed);
+
+        // 让摄像机朝向目标
+        Quaternion targetRotation = Quaternion.LookRotation(s_playerattack.GetTarget().position - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * f_smoothSpeed);
+    }
+
+    void HandleFreeCamera()
+    {
+        // 检查触摸输入并更新摄像头位置
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-
-            // 如果触摸在屏幕右半边
-            if (touch.position.x > Screen.width / 2  && !s_attackbutton.GetisPressed())
+            if (touch.position.x > Screen.width / 2 && !s_attackbutton.GetisPressed())
             {
                 HandleTouchRotation(touch);
             }
         }
-
-        // 更新摄像头位置和朝向
         UpdateCameraPosition();
     }
-
+    
+    
     private void HandleTouchRotation(Touch touch)
     {
         if (touch.phase == TouchPhase.Moved)
         {
-            // 根据触摸的滑动调整摄像头的旋转角度
             float deltaX = touch.deltaPosition.x * f_rotationSpeed;
             float deltaY = -touch.deltaPosition.y * f_rotationSpeed;
-
-            // 更新水平和垂直角度
             f_currentYaw += deltaX;
             f_currentPitch += deltaY;
-
-            // 限制垂直角度在指定范围内
             f_currentPitch = Mathf.Clamp(f_currentPitch, f_minVerticalAngle, f_maxVerticalAngle);
         }
     }
 
     private void UpdateCameraPosition()
     {
-        // 计算旋转后的摄像头位置
         Quaternion rotation = Quaternion.Euler(f_currentPitch, f_currentYaw, 0);
         Vector3 rotatedOffset = rotation * v3_offset;
-
-        // 更新摄像头的位置和朝向
         transform.position = target.position + rotatedOffset;
         transform.LookAt(target);
+    }
+
+    private void LockOnTarget()
+    {
+        // 让摄像头对准目标
+        transform.LookAt(s_playerattack.GetTarget());
     }
 }
