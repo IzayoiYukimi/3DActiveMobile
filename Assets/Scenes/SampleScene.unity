@@ -2188,6 +2188,8 @@ MonoBehaviour:
   b_isrolling: 0
   b_islocking: 0
   b_isontheground: 0
+  f_movex: 0
+  f_movey: 0
   ikWeight: 1
   footOffset: 0.1
 --- !u!114 &1580408085
@@ -2208,7 +2210,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   transform_camera: {fileID: 963194228}
   v2_inputmove: {x: 0, y: 0}
-  b_attackbuttonpressed: 1
+  b_attackbuttonpressed: 0
   v2_attackbuttondrag: {x: 0, y: 0}
   b_attackbuttondraged: 0
   b_rollbuttonpressed: 0

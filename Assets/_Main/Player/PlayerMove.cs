@@ -20,10 +20,10 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("是否在地面上")] [SerializeField] private bool b_isontheground = true;
 
     private Vector3 v3_targetDirection;
-    
+
     private float f_movex = 0f;
     private float f_movey = 0f;
-    
+
     // 足部IK权重
     [Range(0, 1)] public float ikWeight = 1.0f;
     [Tooltip("脚的位置偏移值")] public float footOffset = 0.1f;
@@ -123,12 +123,13 @@ public class PlayerMove : MonoBehaviour
         cameraRight.y = 0f; // 忽略垂直方向
         cameraRight.Normalize();
 
-        // 根据摇杆输入计算目标方向
-        f_movex = Vector3.Dot(cameraRight, new Vector3(playertouchcontroller.v2_inputmove.x, 0, playertouchcontroller.v2_inputmove.y));
-        f_movey = Vector3.Dot(cameraForward, new Vector3(playertouchcontroller.v2_inputmove.x, 0, playertouchcontroller.v2_inputmove.y));
-        
-        if(!b_islocking) v3_targetDirection = new Vector3(f_movex, 0, f_movey);
-        else v3_targetDirection = transform.forward;
+        // 基于相机方向计算摇杆输入的世界空间方向
+        v3_targetDirection = (cameraRight * playertouchcontroller.v2_inputmove.x) +
+                             (cameraForward * playertouchcontroller.v2_inputmove.y);
+
+        // 使用计算得到的输入方向来设置移动方向参数
+        f_movex = v3_targetDirection.x;
+        f_movey = v3_targetDirection.z;
         
         // 如果目标方向不为零
         if (v3_targetDirection.sqrMagnitude > 0.01f)
