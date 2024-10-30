@@ -19,6 +19,11 @@ public class PlayerMove : MonoBehaviour
 
     [Tooltip("是否在地面上")] [SerializeField] private bool b_isontheground = true;
 
+    private Vector3 v3_targetDirection;
+    
+    private float f_movex = 0f;
+    private float f_movey = 0f;
+    
     // 足部IK权重
     [Range(0, 1)] public float ikWeight = 1.0f;
     [Tooltip("脚的位置偏移值")] public float footOffset = 0.1f;
@@ -44,15 +49,15 @@ public class PlayerMove : MonoBehaviour
     {
         if (playertouchcontroller.b_rollbuttonpressed && !b_isrolling)
         {
-            if (b_islocking)
+            if (playertouchcontroller.v2_inputmove != Vector2.zero)
             {
-                animator.SetFloat("RollX", playertouchcontroller.v2_inputmove.x);
-                animator.SetFloat("RollY", playertouchcontroller.v2_inputmove.y);
+                animator.SetFloat("MoveX", f_movex);
+                animator.SetFloat("MoveY", f_movey);
             }
             else
             {
-                animator.SetFloat("RollX", 0f);
-                animator.SetFloat("RollY", 1f);
+                animator.SetFloat("MoveX", 0f);
+                animator.SetFloat("MoveY", 1f);
             }
 
 
@@ -119,13 +124,16 @@ public class PlayerMove : MonoBehaviour
         cameraRight.Normalize();
 
         // 根据摇杆输入计算目标方向
-        Vector3 targetDirection = cameraForward * playertouchcontroller.v2_inputmove.y +
-                                  cameraRight * playertouchcontroller.v2_inputmove.x;
-
+        f_movex = Vector3.Dot(cameraRight, new Vector3(playertouchcontroller.v2_inputmove.x, 0, playertouchcontroller.v2_inputmove.y));
+        f_movey = Vector3.Dot(cameraForward, new Vector3(playertouchcontroller.v2_inputmove.x, 0, playertouchcontroller.v2_inputmove.y));
+        
+        if(!b_islocking) v3_targetDirection = new Vector3(f_movex, 0, f_movey);
+        else v3_targetDirection = transform.forward;
+        
         // 如果目标方向不为零
-        if (targetDirection.sqrMagnitude > 0.01f)
+        if (v3_targetDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(v3_targetDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, f_rotationSpeed * Time.deltaTime);
         }
     }

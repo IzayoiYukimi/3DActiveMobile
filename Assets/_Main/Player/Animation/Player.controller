@@ -584,13 +584,13 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: RollX
+  - m_Name: MoveX
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: RollY
+  - m_Name: MoveY
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -598,6 +598,12 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   - m_Name: Roll
     m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: IsLocking
+    m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -874,8 +880,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: Speed
     m_Mirror: 0
-  m_BlendParameter: RollX
-  m_BlendParameterY: RollY
+  m_BlendParameter: MoveX
+  m_BlendParameterY: MoveY
   m_MinThreshold: 0
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1
