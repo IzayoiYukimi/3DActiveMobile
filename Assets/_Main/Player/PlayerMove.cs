@@ -135,15 +135,15 @@ public class PlayerMove : MonoBehaviour
 
         v3_targetDirection = (cameraRight * s_playertouchcontroller.v2_inputmove.x) +
                              (cameraForward * s_playertouchcontroller.v2_inputmove.y);
-        // 使用计算得到的输入方向来设置移动方向参数
-        f_movex = v3_targetDirection.x;
-        f_movey = v3_targetDirection.z;
-
+        
         // 基于相机方向计算摇杆输入的世界空间方向
         if (s_playerattack.Getislocking())
         {
             if (s_playerattack.GetTarget() != null)
                 v3_targetDirection = (s_playerattack.GetTarget().position - transform.position).normalized;
+            // 使用计算得到的输入方向来设置移动方向参数
+            f_movex = s_playertouchcontroller.v2_inputmove.x;
+            f_movey = s_playertouchcontroller.v2_inputmove.y;
         }
 
 
