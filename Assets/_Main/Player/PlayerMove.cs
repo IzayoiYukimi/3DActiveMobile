@@ -48,20 +48,20 @@ public class PlayerMove : MonoBehaviour
     {
         if (!s_playerattack.Getislocking())
         {
-            animator.SetFloat("MoveX", 0f);
-            animator.SetFloat("MoveY", 1f);
+            animator.SetFloat("RollX", 0f);
+            animator.SetFloat("RollY", 1f);
         }
         else
         {
             if (s_playertouchcontroller.v2_inputmove == Vector2.zero)
             {
-                animator.SetFloat("MoveX", 0f);
-                animator.SetFloat("MoveY", 1f);
+                animator.SetFloat("RollX", 0f);
+                animator.SetFloat("RollY", 1f);
             }
             else
             {
-                animator.SetFloat("MoveX", f_movex);
-                animator.SetFloat("MoveY", f_movey);
+                animator.SetFloat("RollX", f_movex);
+                animator.SetFloat("RollY", f_movey);
             }
         }
 
@@ -82,6 +82,9 @@ public class PlayerMove : MonoBehaviour
     void SetAnimatorParameters()
     {
         animator.SetFloat("Speed", s_playertouchcontroller.v2_inputmove.magnitude);
+        animator.SetBool("IsLocking", s_playerattack.Getislocking());
+        animator.SetFloat("MoveX", f_movex);
+        animator.SetFloat("MoveY", f_movey);
     }
 
     void OnAnimatorIK(int layerIndex)
@@ -140,7 +143,7 @@ public class PlayerMove : MonoBehaviour
         if (s_playerattack.Getislocking())
         {
             if (s_playerattack.GetTarget() != null)
-                v3_targetDirection = s_playerattack.GetTarget().position - transform.position;
+                v3_targetDirection = (s_playerattack.GetTarget().position - transform.position).normalized;
         }
 
 

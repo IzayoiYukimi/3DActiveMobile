@@ -94,10 +94,4 @@ public class MainCameraController : MonoBehaviour
         transform.position = target.position + rotatedOffset;
         transform.LookAt(target);
     }
-
-    private void LockOnTarget()
-    {
-        // 让摄像头对准目标
-        transform.LookAt(s_playerattack.GetTarget());
-    }
 }

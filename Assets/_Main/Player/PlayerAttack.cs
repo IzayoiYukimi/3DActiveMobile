@@ -24,6 +24,8 @@ public class PlayerAttack : MonoBehaviour
     {
         Attack();
         CheckSkill();
+
+        b_islocking = playerTouchController.b_islocking;
     }
 
     void Attack()

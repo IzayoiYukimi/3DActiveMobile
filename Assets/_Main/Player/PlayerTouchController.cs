@@ -8,6 +8,8 @@ public class PlayerTouchController : MonoBehaviour
     
     [SerializeField]private RollButton s_rollbutton;
     
+    [SerializeField]private LockButton s_lockbutton;
+    
     [SerializeField]private Animator animator;
 
     public Transform transform_camera;
@@ -16,6 +18,7 @@ public class PlayerTouchController : MonoBehaviour
     public Vector2 v2_attackbuttondrag;
     public bool b_attackbuttondraged = false;
     public bool b_rollbuttonpressed = false;
+    public bool b_islocking = false;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -33,6 +36,8 @@ public class PlayerTouchController : MonoBehaviour
         b_attackbuttondraged = s_attackbutton.GetDraged();
         
         b_rollbuttonpressed=s_rollbutton.GetisPressed();
+
+        b_islocking = s_lockbutton.GetisLocking();
     }
 
     public void ResetAttackDrag()
