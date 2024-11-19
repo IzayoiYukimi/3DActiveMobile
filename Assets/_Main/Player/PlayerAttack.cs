@@ -3,19 +3,22 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     PlayerTouchController playerTouchController;
+    PlayerValues playervalues;
+
     Animator animator;
 
     [SerializeField] float f_attackbuttonpressedtime = 0f;
     private bool b_attacked = false;
 
-    [SerializeField]bool b_islocking = false;
-    
+    [SerializeField] bool b_islocking = false;
+
     public Transform transform_target;
-    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         playerTouchController = GetComponent<PlayerTouchController>();
+        playervalues = GetComponent<PlayerValues>();
         animator = GetComponent<Animator>();
     }
 
@@ -46,6 +49,7 @@ public class PlayerAttack : MonoBehaviour
                 else
                 {
                     animator.SetTrigger("HeavyAttack");
+                    playervalues.b_isheavyattack = true;
                 }
 
                 b_attacked = false;

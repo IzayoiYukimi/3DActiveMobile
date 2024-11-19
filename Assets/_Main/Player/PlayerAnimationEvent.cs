@@ -6,13 +6,15 @@ public class PlayerAnimationEvent : MonoBehaviour
 {
     private Animator animator;
     private PlayerMove playermove;
+    private PlayerValues playervalues;
 
     [SerializeField] List<string> triggers = new List<string>();
 
-    private void Start()
+    private void OnEnable()
     {
         animator = GetComponent<Animator>();
         playermove = GetComponent<PlayerMove>();
+        playervalues = GetComponent<PlayerValues>();
 
         foreach (var parameter in animator.parameters)
         {
@@ -23,17 +25,27 @@ public class PlayerAnimationEvent : MonoBehaviour
         }
     }
 
-    public void OverRoll()
+    public void OverRoll()//结束翻滚
     {
-        Debug.Log("Reseted!!!");
         playermove.ResetisRolling();
     }
-
-    public void ResetTrigger()
+    
+    public void ResetTrigger()//重置所有触发器
     {
         foreach (var trigger in triggers)
         {
             animator.ResetTrigger(trigger);
         }
+    }
+
+    public void SetAttackable()//攻击的第一帧
+    {
+        playervalues.b_attackable = true;
+    }
+
+    public void ResetAttackable()//攻击结束
+    {
+        playervalues.b_attackable = false;
+        playervalues.b_isheavyattack = false;
     }
 }
