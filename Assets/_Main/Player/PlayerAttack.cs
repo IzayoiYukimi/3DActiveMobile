@@ -3,22 +3,18 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     PlayerTouchController playerTouchController;
-    PlayerValues playervalues;
-
+    PlayerStatus playervalues;
     Animator animator;
-
     [SerializeField] float f_attackbuttonpressedtime = 0f;
     private bool b_attacked = false;
 
-    [SerializeField] bool b_islocking = false;
-
-    public Transform transform_target;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
         playerTouchController = GetComponent<PlayerTouchController>();
-        playervalues = GetComponent<PlayerValues>();
+        playervalues = GetComponent<PlayerStatus>();
         animator = GetComponent<Animator>();
     }
 
@@ -27,8 +23,11 @@ public class PlayerAttack : MonoBehaviour
     {
         Attack();
         CheckSkill();
-
-        b_islocking = playerTouchController.b_islocking;
+        Knockup();
+        
+        playervalues.battlevalues.b_islocking = playerTouchController.b_islocking;
+        
+        
     }
 
     void Attack()
@@ -49,7 +48,7 @@ public class PlayerAttack : MonoBehaviour
                 else
                 {
                     animator.SetTrigger("HeavyAttack");
-                    playervalues.b_isheavyattack = true;
+                    playervalues.battlevalues.b_isheavyattack = true;
                 }
 
                 b_attacked = false;
@@ -58,6 +57,21 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    void Knockup()
+    {
+        if (playervalues.battlevalues.b_isknockup)
+        {
+            if (playervalues.programvalues.d_knockupenemys.Count > 0)
+            {
+                foreach (var enemy in playervalues.programvalues.d_knockupenemys)
+                {
+                    enemy.Key.transform.position = playervalues.programvalues.transform_rootmotion.position + enemy.Value;
+                }
+            }
+        }
+    }
+    
+    
     void CheckSkill()
     {
         if (playerTouchController.v2_attackbuttondrag != Vector2.zero)
@@ -105,14 +119,5 @@ public class PlayerAttack : MonoBehaviour
     void OnDrapDown()
     {
     }
-
-    public bool Getislocking()
-    {
-        return b_islocking;
-    }
-
-    public Transform GetTarget()
-    {
-        return transform_target;
-    }
+    
 }

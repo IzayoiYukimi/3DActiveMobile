@@ -6,7 +6,7 @@ public class PlayerAnimationEvent : MonoBehaviour
 {
     private Animator animator;
     private PlayerMove playermove;
-    private PlayerValues playervalues;
+    private PlayerStatus playervalues;
 
     [SerializeField] List<string> triggers = new List<string>();
 
@@ -14,7 +14,7 @@ public class PlayerAnimationEvent : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playermove = GetComponent<PlayerMove>();
-        playervalues = GetComponent<PlayerValues>();
+        playervalues = GetComponent<PlayerStatus>();
 
         foreach (var parameter in animator.parameters)
         {
@@ -25,12 +25,12 @@ public class PlayerAnimationEvent : MonoBehaviour
         }
     }
 
-    public void OverRoll()//结束翻滚
+    public void OverRoll() //结束翻滚
     {
         playermove.ResetisRolling();
     }
-    
-    public void ResetTrigger()//重置所有触发器
+
+    public void ResetTrigger() //重置所有触发器
     {
         foreach (var trigger in triggers)
         {
@@ -38,14 +38,41 @@ public class PlayerAnimationEvent : MonoBehaviour
         }
     }
 
-    public void SetAttackable()//攻击的第一帧
+    public void SetAttackable() //攻击的第一帧
     {
-        playervalues.b_attackable = true;
+        playervalues.basevalues.b_attackable = true;
     }
 
-    public void ResetAttackable()//攻击结束
+    public void ResetAttackable() //攻击结束
     {
-        playervalues.b_attackable = false;
-        playervalues.b_isheavyattack = false;
+        playervalues.basevalues.b_attackable = false;
+        if (playervalues.battlevalues.b_isheavyattack) playervalues.battlevalues.b_isheavyattack = false;
+    }
+
+
+    public void Knockup(int _combo = 1) //打飞攻击的第一帧
+    {
+        playervalues.battlevalues.b_isknockup = true;
+        SetAttackable();
+        if (_combo == 1)
+        {
+            ChangeRigidbodyGravity(false);
+        }
+    }
+
+    public void FinishKnockup(int _combo = 1) //打飞攻击的最后一帧
+    {
+        playervalues.programvalues.d_knockupenemys.Clear();
+        playervalues.battlevalues.b_isknockup = false;
+        ResetAttackable();
+        if (_combo == 2)
+        {
+            ChangeRigidbodyGravity(true);
+        }
+    }
+
+    public void ChangeRigidbodyGravity(bool _enable)
+    {
+        playervalues.programvalues.rb.useGravity = _enable;
     }
 }

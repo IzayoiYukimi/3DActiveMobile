@@ -4,36 +4,17 @@ using UnityEngine.UIElements.Experimental;
 
 public class PlayerMove : MonoBehaviour
 {
+    PlayerStatus playervalues;
     Animator animator;
     PlayerTouchController s_playertouchcontroller;
-    PlayerAttack s_playerattack;
-    private Rigidbody rb;
-
-    [SerializeField] LayerMask groundLayer;
-
-    [Tooltip("旋转速度")] [SerializeField] private float f_rotationSpeed = 5;
-
-    [Tooltip("是否正在翻滚")] [SerializeField] private bool b_isrolling = false;
-
-    [Tooltip("是否在地面上")] [SerializeField] private bool b_isontheground = true;
-
-    private Vector3 v3_targetDirection;
-
-    private float f_movex = 0f;
-    private float f_movey = 0f;
-
-    // 足部IK权重
-    [Range(0, 1)] public float ikWeight = 1.0f;
-    [Tooltip("脚的位置偏移值")] public float footOffset = 0.1f;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
         animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
         s_playertouchcontroller = GetComponent<PlayerTouchController>();
-        s_playerattack = GetComponent<PlayerAttack>();
+        playervalues = GetComponent<PlayerStatus>();
     }
 
     // Update is called once per frame
@@ -42,11 +23,12 @@ public class PlayerMove : MonoBehaviour
         RotateTowardsInput();
         SetAnimatorParameters();
         PlayerRoll();
+        CheckDistanceToGround();
     }
 
     void PlayerRoll()
     {
-        if (!s_playerattack.Getislocking())
+        if (!playervalues.battlevalues.b_islocking)
         {
             animator.SetFloat("RollX", 0f);
             animator.SetFloat("RollY", 1f);
@@ -60,31 +42,53 @@ public class PlayerMove : MonoBehaviour
             }
             else
             {
-                animator.SetFloat("RollX", f_movex);
-                animator.SetFloat("RollY", f_movey);
+                animator.SetFloat("RollX", playervalues.movevalues.f_movex);
+                animator.SetFloat("RollY", playervalues.movevalues.f_movey);
             }
         }
 
-        if (s_playertouchcontroller.b_rollbuttonpressed && !b_isrolling)
+        if (s_playertouchcontroller.b_rollbuttonpressed && !playervalues.movevalues.b_isrolling)
         {
             animator.SetTrigger("Roll");
-            b_isrolling = true;
+            playervalues.movevalues.b_isrolling = true;
             s_playertouchcontroller.ResetRollPressed();
+        }
+    }
+
+    private void CheckDistanceToGround()
+    {
+        // 从物体的当前位置向下发射射线
+        Ray ray = new Ray(playervalues.programvalues.transform_rootmotion.position, Vector3.down);
+        RaycastHit hit;
+
+        // 检测与 Ground Layer 的碰撞
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, playervalues.movevalues.groundLayer))
+        {
+            if (hit.distance < 0.88f)
+            {
+                playervalues.movevalues.b_isontheground = true;
+                playervalues.ChangeCollider(playervalues.programvalues.body_ground_collider);
+            }
+            else
+            {
+                playervalues.movevalues.b_isontheground = false;
+                playervalues.ChangeCollider(playervalues.programvalues.body_air_collider);
+            }
         }
     }
 
     //在PlayerAnimationEvent Sprict中调用
     public void ResetisRolling()
     {
-        b_isrolling = false;
+        playervalues.movevalues.b_isrolling = false;
     }
 
     void SetAnimatorParameters()
     {
         animator.SetFloat("Speed", s_playertouchcontroller.v2_inputmove.magnitude);
-        animator.SetBool("IsLocking", s_playerattack.Getislocking());
-        animator.SetFloat("MoveX", f_movex);
-        animator.SetFloat("MoveY", f_movey);
+        animator.SetBool("IsLocking", playervalues.battlevalues.b_islocking);
+        animator.SetFloat("MoveX", playervalues.movevalues.f_movex);
+        animator.SetFloat("MoveY", playervalues.movevalues.f_movey);
     }
 
     void OnAnimatorIK(int layerIndex)
@@ -92,10 +96,10 @@ public class PlayerMove : MonoBehaviour
         if (animator)
         {
             // 启用IK并设置权重
-            animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, ikWeight);
-            animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, ikWeight);
-            animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, ikWeight);
-            animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, ikWeight);
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, playervalues.movevalues.ikWeight);
+            animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, playervalues.movevalues.ikWeight);
+            animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, playervalues.movevalues.ikWeight);
+            animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, playervalues.movevalues.ikWeight);
 
             // 左脚IK位置和旋转
             SetFootIK(AvatarIKGoal.LeftFoot);
@@ -110,10 +114,10 @@ public class PlayerMove : MonoBehaviour
         // 获取脚的目标位置
         Vector3 footPos = animator.GetIKPosition(foot);
         Ray ray = new Ray(footPos + Vector3.up, Vector3.down);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, 1f, groundLayer))
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, 1f, playervalues.movevalues.groundLayer))
         {
             footPos = hitInfo.point;
-            footPos.y += footOffset; // 加入偏移值使脚离地
+            footPos.y += playervalues.movevalues.footOffset; // 加入偏移值使脚离地
 
             // 设置脚的位置和旋转
             animator.SetIKPosition(foot, footPos);
@@ -133,25 +137,27 @@ public class PlayerMove : MonoBehaviour
         cameraRight.y = 0f; // 忽略垂直方向
         cameraRight.Normalize();
 
-        v3_targetDirection = (cameraRight * s_playertouchcontroller.v2_inputmove.x) +
-                             (cameraForward * s_playertouchcontroller.v2_inputmove.y);
-        
+        playervalues.movevalues.v3_targetDirection = (cameraRight * s_playertouchcontroller.v2_inputmove.x) +
+                                                     (cameraForward * s_playertouchcontroller.v2_inputmove.y);
+
         // 基于相机方向计算摇杆输入的世界空间方向
-        if (s_playerattack.Getislocking())
+        if (playervalues.battlevalues.b_islocking)
         {
-            if (s_playerattack.GetTarget() != null)
-                v3_targetDirection = (s_playerattack.GetTarget().position - transform.position).normalized;
+            if (playervalues.programvalues.transform_target != null)
+                playervalues.movevalues.v3_targetDirection =
+                    (playervalues.programvalues.transform_target.position - transform.position).normalized;
             // 使用计算得到的输入方向来设置移动方向参数
-            f_movex = s_playertouchcontroller.v2_inputmove.x;
-            f_movey = s_playertouchcontroller.v2_inputmove.y;
+            playervalues.movevalues.f_movex = s_playertouchcontroller.v2_inputmove.x;
+            playervalues.movevalues.f_movey = s_playertouchcontroller.v2_inputmove.y;
         }
 
 
         // 如果目标方向不为零
-        if (v3_targetDirection.sqrMagnitude > 0.01f)
+        if (playervalues.movevalues.v3_targetDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(v3_targetDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, f_rotationSpeed * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(playervalues.movevalues.v3_targetDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,
+                playervalues.movevalues.f_rotationSpeed * Time.deltaTime);
         }
     }
 }

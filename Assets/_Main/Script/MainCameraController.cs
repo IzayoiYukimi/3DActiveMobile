@@ -2,22 +2,18 @@ using UnityEngine;
 
 public class MainCameraController : MonoBehaviour
 {
-    [Header("目标对象")]
-    public Transform target;
+    [Header("目标对象")] public Transform target;
 
-    [Header("旋转速度")]
-    public float f_rotationSpeed = 0.2f;
+    [Header("旋转速度")] public float f_rotationSpeed = 0.2f;
     public float f_smoothSpeed = 5f;
 
-    [Header("摄像头距离")]
-    public float f_distance = 5.0f;
+    [Header("摄像头距离")] public float f_distance = 5.0f;
 
-    [Header("垂直角度限制")]
-    public float f_minVerticalAngle = -0f;
+    [Header("垂直角度限制")] public float f_minVerticalAngle = -0f;
     public float f_maxVerticalAngle = 60f;
 
     [SerializeField] private AttackButton s_attackbutton;
-    [SerializeField] private PlayerAttack s_playerattack;
+    [SerializeField] private PlayerStatus playervalues;
 
     private Vector3 v3_offset;
     private float f_currentYaw = 0f;
@@ -32,7 +28,7 @@ public class MainCameraController : MonoBehaviour
 
     void Update()
     {
-        if (s_playerattack.Getislocking())
+        if (playervalues.battlevalues.b_islocking)
         {
             // 锁定状态下持续保持相机在延长线上
             MaintainCameraOnExtensionLine();
@@ -47,7 +43,7 @@ public class MainCameraController : MonoBehaviour
     void MaintainCameraOnExtensionLine()
     {
         // 计算角色到目标的方向向量
-        Vector3 directionToTarget = (target.position - s_playerattack.GetTarget().position).normalized;
+        Vector3 directionToTarget = (target.position - playervalues.programvalues.transform_target.position).normalized;
 
         // 计算相机的位置，使其在目标到角色的延长线上
         Vector3 desiredPosition = target.position + directionToTarget * f_distance;
@@ -56,7 +52,7 @@ public class MainCameraController : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * f_smoothSpeed);
 
         // 让摄像机朝向目标
-        Quaternion targetRotation = Quaternion.LookRotation(s_playerattack.GetTarget().position - transform.position);
+        Quaternion targetRotation = Quaternion.LookRotation(playervalues.programvalues.transform_target.position - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * f_smoothSpeed);
     }
 
@@ -71,10 +67,11 @@ public class MainCameraController : MonoBehaviour
                 HandleTouchRotation(touch);
             }
         }
+
         UpdateCameraPosition();
     }
-    
-    
+
+
     private void HandleTouchRotation(Touch touch)
     {
         if (touch.phase == TouchPhase.Moved)
