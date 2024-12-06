@@ -51,7 +51,7 @@ public class TouchJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, I
     }
 
     // 重置摇杆到初始位置
-    private void ResetJoystick()
+    public void ResetJoystick()
     {
         center.anchoredPosition = Vector2.zero;
         v2_inputVector = Vector2.zero;

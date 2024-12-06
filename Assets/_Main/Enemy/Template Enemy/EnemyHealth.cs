@@ -12,13 +12,13 @@ public class EnemyHealth : MonoBehaviour
     {
         enemyvalues = GetComponent<EnemyStatus>();
         i_currentHP = enemyvalues.basevalues.i_maxHP;
-        i_currentSG = enemyvalues.i_maxSG;
+        i_currentSG = enemyvalues.battlestatus.i_maxSG;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (i_currentHP <= 0&&!enemyvalues.basevalues.b_isdead)
+        if (i_currentHP <= 0 && !enemyvalues.basevalues.b_isdead)
         {
             enemyvalues.basevalues.b_isdead = true;
         }
@@ -40,6 +40,5 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeStatus()
     {
-        
     }
 }
