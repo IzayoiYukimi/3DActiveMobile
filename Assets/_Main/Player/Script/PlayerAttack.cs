@@ -52,6 +52,8 @@ public class PlayerAttack : MonoBehaviour
                 f_attackbuttonpressedtime = 0f;
             }
         }
+
+        playervalues.programvalues.weaponcollider.enabled = playervalues.basevalues.b_attackable;
     }
 
     void Knockup()
@@ -72,6 +74,8 @@ public class PlayerAttack : MonoBehaviour
     void Defence()
     {
         animator.SetBool("IsDefencing", playerTouchController.b_isdefencing);
+        //playervalues.programvalues.defence_collider.enabled = playerTouchController.b_isdefencing;
+        //playervalues.programvalues.f_defencetime = playerTouchController.b_isdefencing ? playervalues.programvalues.f_defencetime+= Time.deltaTime:0;
     }
 
 

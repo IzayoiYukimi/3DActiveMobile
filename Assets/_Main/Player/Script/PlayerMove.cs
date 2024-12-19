@@ -23,7 +23,7 @@ public class PlayerMove : MonoBehaviour
         RotateTowardsInput();
         SetAnimatorParameters();
         PlayerRoll();
-        CheckDistanceToGround();
+        //CheckDistanceToGround();
     }
 
     void PlayerRoll()

@@ -30,14 +30,6 @@ public class PlayerAnimationEvent : MonoBehaviour
         playermove.ResetisRolling();
     }
 
-    public void ResetTrigger() //重置所有触发器
-    {
-        foreach (var trigger in triggers)
-        {
-            animator.ResetTrigger(trigger);
-        }
-    }
-
     public void SetAttackable() //攻击的第一帧
     {
         playervalues.basevalues.b_attackable = true;
@@ -50,29 +42,48 @@ public class PlayerAnimationEvent : MonoBehaviour
     }
 
 
-    public void Knockup(int _combo = 1) //打飞攻击的第一帧
+    public void Knockup() //打飞攻击的第一帧
     {
         playervalues.battlevalues.b_isknockup = true;
         SetAttackable();
-        if (_combo == 1)
-        {
-            ChangeRigidbodyGravity(false);
-        }
     }
 
-    public void FinishKnockup(int _combo = 1) //打飞攻击的最后一帧
+    public void FinishKnockup() //打飞攻击的最后一帧
     {
         playervalues.programvalues.d_knockupenemys.Clear();
         playervalues.battlevalues.b_isknockup = false;
         ResetAttackable();
-        if (_combo == 2)
-        {
-            ChangeRigidbodyGravity(true);
-        }
     }
 
-    public void ChangeRigidbodyGravity(bool _enable)
+    public void UnenableRigidbody()
     {
-        playervalues.programvalues.rb.useGravity = _enable;
+        playervalues.programvalues.rb.isKinematic = true;
+    }
+
+    public void IntoIdle()
+    {
+        foreach (var trigger in triggers)
+        {
+            animator.ResetTrigger(trigger);
+        }
+        playervalues.programvalues.rb.isKinematic = false;
+        playervalues.ChangeCollider(playervalues.programvalues.body_ground_collider);
+        
+    }
+
+    public void ChangeAirCollider()
+    {
+        playervalues.ChangeCollider(playervalues.programvalues.body_air_collider);
+        UnenableRigidbody();
+    }
+
+    public void SetPerfectDefence(int _timing)
+    {
+        playervalues.programvalues.b_isperfectdefence = _timing != 0;
+    }
+
+    public void SetDefenceCollider(int _enable)
+    {
+        playervalues.programvalues.defence_collider.enabled = _enable != 0;
     }
 }

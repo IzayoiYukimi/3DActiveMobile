@@ -15,7 +15,7 @@ public class PlayerWeaponCollider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playervalues.programvalues.weaponcollider.enabled = playervalues.basevalues.b_attackable;
+        
     }
 
 

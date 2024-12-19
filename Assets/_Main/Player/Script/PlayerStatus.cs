@@ -34,16 +34,18 @@ public class PlayerStatus : CharacterStatus
 
         [Header("攻击顿帧程度")] public float f_attackstopscale = 0.1f;
 
+        [Header("是否完美防御")] public bool b_isperfectdefence = false;
+
         [Header("击飞敌人列表")]
         public Dictionary<GameObject, Vector3> d_knockupenemys = new Dictionary<GameObject, Vector3>();
 
-        [Header("武器碰撞体")] public MeshCollider weaponcollider = null;
+        [Header("武器碰撞体")] public Collider weaponcollider = null;
 
         [Header("Body碰撞体")] public Collider body_ground_collider = null;
 
         [Header("BodyAir碰撞体")] public Collider body_air_collider = null;
-        
-        [Header("Defence碰撞体")]public Collider defence_collider = null;
+
+        [Header("Defence碰撞体")] public Collider defence_collider = null;
 
         [Header("刚体")] public Rigidbody rb = null;
 

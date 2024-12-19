@@ -4,11 +4,13 @@ using UnityEngine;
 public class SamuraiAnimationEvent : MonoBehaviour
 {
     [SerializeField] private GameObject weapon;
-    private EnemyStatus enemystatus;
+    [SerializeField]private EnemyStatus enemystatus;
+    [SerializeField]private Animator animator;
 
     private void OnEnable()
     {
-        enemystatus = GetComponent<EnemyStatus>();
+        enemystatus = GetComponent<SamuraiStatus>();
+        animator = GetComponent<Animator>();
     }
 
     public void EquipWeapon()
@@ -20,5 +22,10 @@ public class SamuraiAnimationEvent : MonoBehaviour
     {
         enemystatus.programstatus.currentTarget.GetComponent<PlayerStatus>().programvalues.b_inputenable = true;
         enemystatus.programstatus.rb.isKinematic = false;
+    }
+
+    public void ResetTrigger(string _triggername)
+    {
+        animator.ResetTrigger(_triggername);
     }
 }

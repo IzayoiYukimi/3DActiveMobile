@@ -2040,10 +2040,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33eef135c45814ae48afdb01b661a5c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerstatus: {fileID: 0}
+  touchcontroller: {fileID: 0}
   s_touchjoystick: {fileID: 0}
   s_attackbutton: {fileID: 0}
   s_rollbutton: {fileID: 0}
   s_lockbutton: {fileID: 0}
+  s_defencebutton: {fileID: 0}
   animator: {fileID: 0}
   transform_camera: {fileID: 0}
   v2_inputmove: {x: 0, y: 0}
@@ -2052,6 +2055,7 @@ MonoBehaviour:
   b_attackbuttondraged: 0
   b_rollbuttonpressed: 0
   b_islocking: 0
+  b_isdefencing: 0
 --- !u!114 &8199977344197245218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,12 +2090,15 @@ MonoBehaviour:
   programvalues:
     f_attackstoptime: 0.1
     f_attackstopscale: 0.1
+    b_isperfectdefence: 0
     weaponcollider: {fileID: 6290231562732921882}
     body_ground_collider: {fileID: 2656720801823908774}
     body_air_collider: {fileID: 5992394377909802919}
+    defence_collider: {fileID: 0}
     rb: {fileID: 54321110445029456}
     transform_target: {fileID: 0}
     transform_rootmotion: {fileID: 4777483936508628}
+    b_inputenable: 1
   movevalues:
     groundLayer:
       serializedVersion: 2
@@ -6148,7 +6155,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4867021174056818}
-  - component: {fileID: 95395130826656116}
   m_Layer: 3
   m_Name: Hoshi_katana
   m_TagString: Untagged
@@ -6173,28 +6179,6 @@ Transform:
   - {fileID: 4628864639054292}
   m_Father: {fileID: 4659781088422044}
   m_LocalEulerAnglesHint: {x: -91.668, y: 89.99999, z: 155.462}
---- !u!95 &95395130826656116
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1692655771408828}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: a9e786d2b00aa07468f2896571070fbb, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1697687035193326
 GameObject:
   m_ObjectHideFlags: 0
